@@ -318,6 +318,7 @@ class Report:
         """
         self.format = formatter
 
+    # https://github.com/pedal-edu/pedal/issues/133 - DO NOT USE
     def to_json(self):
         """
         Converts the Report instance to a JSON string.
