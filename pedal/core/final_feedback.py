@@ -175,6 +175,45 @@ class FinalFeedback:
             'hide_correctness': self.hide_correctness,
             'location': self.data.get('location', None) if self.data else None
         }
+    
+    @classmethod
+    def from_dict(cls, data):
+        """
+        Creates a FinalFeedback instance from a dictionary.
+        
+        Args:
+            data (dict): The dictionary containing the FinalFeedback data.
+        
+        Returns:
+            FinalFeedback: The deserialized FinalFeedback instance.
+        """
+        instance = cls(
+            correct=data.get('correct', False),
+            success=data.get('success', False),
+            score=data.get('score', 0),
+            category=data.get('category'),
+            label=data.get('label'),
+            title=data.get('title'),
+            message=data.get('message'),
+            data=data.get('data', {}),
+            hide_correctness=data.get('hide_correctness', False)
+        )
+        instance._scores = data.get('scores', [])
+        return instance
+    
+    def deserialize_final_feedback(json_string):
+        """
+        Deserializes a JSON string into a FinalFeedback object.
+        
+        Args:
+            json_string (str): The JSON string representation of the FinalFeedback.
+        
+        Returns:
+            FinalFeedback: The deserialized FinalFeedback instance.
+        """
+        data = json.loads(json_string)
+        final_feedback = FinalFeedback.from_dict(data)
+        return final_feedback
 
     def to_file(self, path, format='json'):
         with open(path, 'w') as f:

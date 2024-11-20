@@ -38,8 +38,8 @@ class StandardEnvironment(Environment):
     """
     def __init__(self, files=None, main_file='answer.py', main_code=None,
                  user=None, assignment=None, course=None, execution=None,
-                 instructor_file='on_run.py', skip_tifa=False, set_correct=True, set_success=None,
-                 skip_run=False, report=MAIN_REPORT, trace=True, threaded=False):
+                 instructor_file='on_run.py', alchemy=False, skip_tifa=False, set_correct=True, 
+                 set_success=None, skip_run=False, report=MAIN_REPORT, trace=True, threaded=False):
         # Possibly user passed in stuff via the command line.
         if files is None and main_code is None:
             (instructor_file, files, main_file, main_code, user, assignment,

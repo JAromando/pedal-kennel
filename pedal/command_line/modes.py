@@ -104,7 +104,7 @@ class Bundle:
             result=self.result.to_json()
         )
 
-    def run_ics_bundle(self, resolver='resolve', skip_tifa=False, skip_run=False):
+    def run_ics_bundle(self, resolver='resolve', skip_tifa=False, skip_run=False, alchemy=False):
         """
         Runs the given instructor control script on the given submission, with the
         accompany contextualizations.
@@ -120,6 +120,7 @@ class Bundle:
             global_data.update(env.setup_environment(self.submission,
                                                      skip_tifa=skip_tifa,
                                                      skip_run=skip_run,
+                                                     alchemy=alchemy,
                                                      threaded=self.config.threaded).fields)
         else:
             MAIN_REPORT.contextualize(self.submission)
@@ -407,6 +408,41 @@ class StatsPipeline(AbstractPipeline):
 
 
 
+class AlchemyPipeline(AbstractPipeline):
+    """
+    ``alchemy``: Similar to full but with Alchemy
+    """
+    def run_control_scripts(self):
+        for bundle in tqdm(self.submissions):
+            bundle.run_ics_bundle(resolver='alchemy_resolve', skip_tifa=self.config.skip_tifa,
+                                  skip_run=self.config.skip_run, alchemy=self.config.alchemy)
+
+    def process_output(self):
+        total = 0
+        errors = 0
+        final = []
+        for bundle in self.submissions:
+            if bundle.result.error:
+                print(bundle.result.error)
+                errors += 1
+            else:
+                final.append(bundle.to_json())
+            total += 1
+        final = clean_json(final)
+        if self.config.output is not None:
+            #print(final)
+            print("Total Processed:", total)
+            print("Errors:", errors)
+            pedal_json_encoder = PedalJSONEncoder(indent=2, skipkeys=True)
+            if self.config.output == 'stdout':
+                print(pedal_json_encoder.encode(final))
+            else:
+                with open(self.config.output, 'w') as output_file:
+                    print(pedal_json_encoder.encode(final), file=output_file)
+        return StatReport(final)
+
+
+
 class VerifyPipeline(AbstractPipeline):
     """
     ``verify``: Pipeline for running the instructor control script on a submission and then
@@ -634,6 +670,8 @@ class MODES:
     VERIFY = 'verify'
     # Output all the feedback objects
     STATS = 'stats'
+    # Full with Alchemy
+    ALCHEMY = 'alchemy'
     # Run the file as student code using the sandbox
     SANDBOX = 'sandbox'
     # Output as much information as possible
@@ -644,6 +682,7 @@ class MODES:
         FEEDBACK: FeedbackPipeline,
         GRADE: GradePipeline,
         STATS: StatsPipeline,
+        ALCHEMY: AlchemyPipeline,
         SANDBOX: SandboxPipeline,
         VERIFY: VerifyPipeline,
         DEBUG: DebugPipeline

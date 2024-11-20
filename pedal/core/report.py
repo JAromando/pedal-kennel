@@ -6,6 +6,7 @@ useful very often. Usually you want to just rely on the global MAIN_REPORT.
 """
 
 __all__ = ['Report', 'MAIN_REPORT']
+import json
 import logging
 import random
 
@@ -316,6 +317,35 @@ class Report:
                 formatter to use.
         """
         self.format = formatter
+
+    def to_json(self):
+        """
+        Converts the Report instance to a JSON string.
+        
+        Returns:
+            str: The JSON string representation of the Report instance.
+        """
+        report_dict = {
+            'feedback': [feedback.to_dict() for feedback in self.feedback],
+            'ignored_feedback': [feedback.to_dict() for feedback in self.ignored_feedback],
+            'suppressions': self.suppressions,
+            'suppressed_labels': self.suppressed_labels,
+            'hiddens': list(self.hiddens),
+            'groups': self.groups,
+            'group': self.group,
+            'group_names': self.group_names,
+            'hooks': self.hooks,
+            'class_hooks': self.class_hooks,
+            'submission': self.submission.to_dict() if self.submission else None,
+            'format': self.format.to_dict(),
+            'result': self.result.to_dict() if self.result else None,
+            'resolves': self.resolves,
+            'pools': self.pools,
+            'chosen_pool': self.chosen_pool,
+            'overridden_feedbacks': list(self.overridden_feedbacks)
+        }
+        return json.dumps(report_dict, indent=4)
+
 
     @classmethod
     def register_tool(cls, tool_name: str, reset_function):
