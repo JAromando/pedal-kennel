@@ -160,7 +160,9 @@ def build_parser(reduced_mode=False):
 
 def parse_args(reduced_mode=False):
     """ Parse the arguments passed into the command line. """
+    # Debugging: Print the mode and available pipelines
     parser = build_parser(reduced_mode)
+
     args = parser.parse_args()
     if args.instructor_name is None:
         args.instructor_name = args.instructor

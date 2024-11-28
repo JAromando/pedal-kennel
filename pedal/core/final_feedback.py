@@ -200,20 +200,6 @@ class FinalFeedback:
         )
         instance._scores = data.get('scores', [])
         return instance
-    
-    def deserialize_final_feedback(json_string):
-        """
-        Deserializes a JSON string into a FinalFeedback object.
-        
-        Args:
-            json_string (str): The JSON string representation of the FinalFeedback.
-        
-        Returns:
-            FinalFeedback: The deserialized FinalFeedback instance.
-        """
-        data = json.loads(json_string)
-        final_feedback = FinalFeedback.from_dict(data)
-        return final_feedback
 
     def to_file(self, path, format='json'):
         with open(path, 'w') as f:
@@ -221,6 +207,20 @@ class FinalFeedback:
                 json.dump(self.to_json(), f)
             else:
                 f.write(self.for_console())
+
+def deserialize_final_feedback(json_string):
+    """
+    Deserializes a JSON string into a FinalFeedback object.
+    
+    Args:
+        json_string (str): The JSON string representation of the FinalFeedback.
+        
+    Returns:
+        FinalFeedback: The deserialized FinalFeedback instance.
+    """
+    data = json.loads(json_string)
+    final_feedback = FinalFeedback.from_dict(data)
+    return final_feedback
 
 def set_correct_no_errors(report: Report) -> FinalFeedback:
     return FinalFeedback(correct=True, score=0,

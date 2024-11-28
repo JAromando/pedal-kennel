@@ -415,7 +415,7 @@ class AlchemyPipeline(AbstractPipeline):
     def run_control_scripts(self):
         for bundle in tqdm(self.submissions):
             bundle.run_ics_bundle(resolver='alchemy_resolve', skip_tifa=self.config.skip_tifa,
-                                  skip_run=self.config.skip_run, alchemy=self.config.alchemy)
+                                  skip_run=self.config.skip_run, alchemy=True)
 
     def process_output(self):
         total = 0

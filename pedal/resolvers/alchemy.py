@@ -33,6 +33,12 @@ def resolve(report=MAIN_REPORT, priority_key=by_priority):
             used.append(partial)
 
     final_data = final.to_json()
+    print(report)
+    print(used)
+
+    # Write final_data to a file
+    with open('final_data.json', 'w') as file:
+        json.dump(final_data, file, indent=4)
 
     # Send the report to the server
     try:
@@ -48,7 +54,7 @@ def resolve(report=MAIN_REPORT, priority_key=by_priority):
         print("Failed to connect to the server")
 
     # Not sure if you would want to make Alchemy's return a Feedback item so it can be added to result or something else entirely.
-        # Override empty message
+    # Override empty message
     final.finalize()
     final.used = used
     report.result = final
